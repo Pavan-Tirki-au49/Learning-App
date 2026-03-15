@@ -1,0 +1,31 @@
+services:
+  # Backend API on Render
+  - type: web
+    name: learning-app-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 4000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://learning-app-frontend.vercel.app # Replace with your vercel URL later
+      # Add your MySQL Database Variables on Render Dashboard
+      # - key: DB_HOST
+      #   value: your-aiven-mysql-host
+      # - key: DB_USER
+      #   value: your-user
+      # - key: DB_PASS
+      #   value: your-password
+      # - key: DB_NAME
+      #   value: defaultdb
+      # - key: DB_PORT
+      #   value: 23415
+      # - key: GEMINI_API_KEY
+      #   value: your-gemini-key
