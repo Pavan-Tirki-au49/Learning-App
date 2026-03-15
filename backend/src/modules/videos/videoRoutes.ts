@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { pool } from "../../config/db";
 import { AuthenticatedRequest, authenticate } from "../../middleware/authMiddleware";
-import { YoutubeTranscript } from "youtube-transcript";
+import { getSubtitles } from "youtube-captions-scraper";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const router = Router();
@@ -87,8 +87,11 @@ router.get("/:videoId/summary", authenticate, async (req: AuthenticatedRequest, 
 
     let transcriptText = "";
     try {
-      const transcript = await YoutubeTranscript.fetchTranscript(ytId);
-      transcriptText = transcript.map(t => t.text).join(" ");
+      const subtitles = await getSubtitles({
+        videoID: ytId,
+        lang: 'en'
+      });
+      transcriptText = subtitles.map((t: any) => t.text).join(" ");
     } catch (err) {
       // YouTube Transcript fails if captions are disabled
       res.json({
