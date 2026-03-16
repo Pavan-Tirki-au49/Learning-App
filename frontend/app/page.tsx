@@ -15,7 +15,7 @@ interface ResumeData {
 }
 
 export default function Home() {
-  const { user } = useAuthStore();
+  const { user, _hasHydrated } = useAuthStore();
   const [resume, setResume] = useState<ResumeData | null>(null);
   const [loading, setLoading] = useState(true);
   const [extraData, setExtraData] = useState<any>(null);
@@ -23,6 +23,8 @@ export default function Home() {
   const [streak, setStreak] = useState(0);
 
   useEffect(() => {
+    if (!_hasHydrated || !user) return; // Wait until store hydrates and user logged in
+    
     const fetchHomeData = async () => {
       try {
         const [resResume, resProfile, resRecs, resStreak] = await Promise.all([
@@ -55,7 +57,11 @@ export default function Home() {
     };
 
     fetchHomeData();
-  }, []);
+  }, [_hasHydrated, user]);
+
+  if (!_hasHydrated) {
+    return <div className="min-h-[calc(100vh-4rem)] flex justify-center items-center"><Spinner /></div>;
+  }
 
   if (!user) {
     // If absolutely not logged in, wait or show landing. But layouts might auto-guard or we rely on Zustand

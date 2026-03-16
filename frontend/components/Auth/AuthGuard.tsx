@@ -7,17 +7,16 @@ import { Spinner } from "../common/Spinner";
 
 export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const { isAuthenticated } = useAuthStore();
-  const [isClient, setIsClient] = useState(false);
+  const { isAuthenticated, _hasHydrated } = useAuthStore();
 
   useEffect(() => {
-    setIsClient(true);
+    if (!_hasHydrated) return; // Wait until store is hydrated from storage
     if (!isAuthenticated) {
       router.push("/auth/login");
     }
-  }, [isAuthenticated, router]);
+  }, [_hasHydrated, isAuthenticated, router]);
 
-  if (!isClient) return <div className="min-h-screen flex items-center justify-center"><Spinner /></div>;
+  if (!_hasHydrated) return <div className="min-h-screen flex items-center justify-center"><Spinner /></div>;
   if (!isAuthenticated) return null;
 
   return <>{children}</>;
