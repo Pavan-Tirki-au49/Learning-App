@@ -5,6 +5,7 @@ import Link from "next/link";
 import apiClient from "@/lib/apiClient";
 import { Button } from "@/components/common/Button";
 import { Alert } from "@/components/common/Alert";
+import { useAuthStore } from "@/store/authStore";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -12,7 +13,14 @@ export default function Register() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { isAuthenticated, _hasHydrated } = useAuthStore();
   const router = useRouter();
+
+  React.useEffect(() => {
+    if (_hasHydrated && isAuthenticated) {
+      router.push("/subjects");
+    }
+  }, [_hasHydrated, isAuthenticated, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

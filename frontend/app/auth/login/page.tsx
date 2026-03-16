@@ -12,8 +12,14 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuthStore();
+  const { login, isAuthenticated, _hasHydrated } = useAuthStore();
   const router = useRouter();
+
+  React.useEffect(() => {
+    if (_hasHydrated && isAuthenticated) {
+      router.push("/subjects");
+    }
+  }, [_hasHydrated, isAuthenticated, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
